@@ -4,10 +4,7 @@ from google.cloud import bigquery
 from google.oauth2 import service_account
 
 # BigQuery credentials and client setup
-credentials = service_account.Credentials.from_service_account_file('D:/OneDrive - Adani/Rcode_Adani_Auto/Mypy/agel-svc-winddata-dmz-prod-fdac36bf5880.json')
-project_id = 'agel-svc-winddata-dmz-prod'
-client = bigquery.Client(credentials=credentials, project=project_id)
-table_id = "agel-svc-winddata-dmz-prod.winddata.Pvform1"
+
 selectQuery = """SELECT * FROM agel-svc-winddata-dmz-prod.winddata.Pvform1"""
 df = client.query(selectQuery).to_dataframe()
 
@@ -277,9 +274,6 @@ def save_data():
         df = df[~((df['Block'] == block) & (df['Plant'] == plant))].append(block_df, ignore_index=True)
         df.to_csv(csv_file_path, index=False)
 
-        credentials = service_account.Credentials.from_service_account_file('D:/OneDrive - Adani/Rcode_Adani_Auto/Mypy/agel-svc-winddata-dmz-prod-fdac36bf5880.json')
-        client = bigquery.Client(credentials=credentials, project=project_id)
-        table_id = "agel-svc-winddata-dmz-prod.winddata.Pvform1"
         table = bigquery.Table(table_id)
         job_config = bigquery.LoadJobConfig()
         job_config.write_disposition = "WRITE_TRUNCATE"
