@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PV Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 5rem;
+            text-align: center;
+            margin-bottom: 0;
+            position: relative;
+            animation: colorChange infinite 3s;
+        }
+
+        h1::after {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #0a7caa, #5b58a5, #0056b3, #8f298f, #0a7caa);
+            background-size: 500% 100%;
+            animation: colorChange 3s infinite;
+            margin-top: 10px;
+        }
+
+        @keyframes colorChange {
+            0% { color: #0a7caa; background-position: 0% 0%; }
+            25% { color: #5b58a5; background-position: 25% 0%; }
+            50% { color: #0056b3; background-position: 50% 0%; }
+            75% { color: #8f298f; background-position: 75% 0%; }
+            100% { color: #0a7caa; background-position: 100% 0%; }
+        }
+
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 150px;
+        }
+
+        .dropdown, .search-bar {
+            display: block;
+            width: 300px;
+            padding: 10px;
+            margin: 20px auto;
+            background-color: #fff;
+            border: 2px solid #007BFF;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .dropdown:focus, .search-bar:focus {
+            border-color: #005bb3;
+            box-shadow: 0 0 8px rgba(0, 91, 187, 0.5);
+            outline: none;
+        }
+
+        button {
+            display: block;
+            width: 150px;
+            padding: 10px;
+            margin: 20px auto;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .tab:hover {
+            background-color: #0056b3;
+        }
+
+        #data {
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        td[contenteditable="true"] {
+            background-color: #fffdd0;
+            cursor: pointer;
+        }
+
+        td[contenteditable="true"]:hover {
+            background-color: #fffacd;
+        }
+    </style>
+</head>
+<body>
+    <img src="https://logowik.com/content/uploads/images/adani-renewables-green-energy1681.logowik.com.webp" alt="Company Logo" class="logo">
+    <div class="container">
+        <h1>PV Form</h1>
+
+        <select class="dropdown" id="plantDropdown" onchange="selectPlant()">
+            {% for plant in plants %}
+            <option value="{{ plant }}">{{ plant }}</option>
+            {% endfor %}
+        </select>
+
+        <div id="tabs"></div>
+        <input type="text" placeholder="Search.." class="search-bar">
+        <div id="data"></div>
+        <button onclick="saveData()">Save Data</button>
+    </div>
+
+    <script>
+    let currentBlock = '';
+    let currentPlant = '';
+
+    function createTabs(blocks) {
+        const tabsContainer = document.getElementById('tabs');
+        tabsContainer.innerHTML = '';
+        blocks.forEach(block => {
+            const button = document.createElement('button');
+            button.className = 'tab';
+            button.innerText = block;
+            button.onclick = () => loadData(block);
+            tabsContainer.appendChild(button);
+        });
+    }
+
+    function selectPlant() {
+        const dropdown = document.getElementById('plantDropdown');
+        currentPlant = dropdown.value;
+        fetch(`/load_data?plant=${currentPlant}`)
+            .then(response => response.json())
+            .then(blocks => createTabs(blocks));
+    }
+
+    function loadData(block) {
+        currentBlock = block;
+        fetch(`/load_data?plant=${currentPlant}&block=${block}`)
+            .then(response => response.json())
+            .then(data => {
+                let table = '<table><tr>';
+                for (let key in data[0]) {
+                    table += `<th>${key}</th>`;
+                }
+                table += '</tr>';
+                data.forEach(row => {
+                    table += '<tr>';
+                    for (let key in row) {
+                        table += `<td contenteditable="true">${row[key]}</td>`;
+                    }
+                    table += '</tr>';
+                });
+                table += '</table>';
+                document.getElementById('data').innerHTML = table;
+            });
+    }
+
+    function saveData() {
+        let data = [];
+        
+        let table = document.querySelector('table');
+        let headers = Array.from(table.querySelectorAll('th')).map(th => th.textContent);
+        let rows = table.querySelectorAll('tr');
+        for (let i = 1; i < rows.length; i++) {
+            let row = {};
+            let cells = rows[i].querySelectorAll('td');
+            headers.forEach((header, index) => {
+                row[header] = cells[index].textContent;
+            });
+            data.push(row);
+        }
+        fetch(`/save_data?block=${currentBlock}&plant=${currentPlant}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => response.json())
+        .then(result => alert(result.message));
+    }
+    </script>
+</body>
+</html>
