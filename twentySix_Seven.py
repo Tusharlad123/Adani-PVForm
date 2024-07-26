@@ -310,10 +310,32 @@ def home():
             });
     }
 
+    //frontend se delete karne ka logic and backend paginations done through it now it will fetch the data which we want to delete and use remove function and pass it to the backend for deletion process
     function deleteRow(button) {
         const row = button.parentElement.parentElement;
-        row.remove();
+        const cells = row.getElementsByTagName('td');
+        let rowData = {};
+        const headers = document.querySelectorAll('th');
+        
+        for (let i = 0; i < cells.length - 1; i++) {
+            rowData[headers[i].textContent] = cells[i].textContent;
+        }
+
+        fetch(`/delete_data?plant=${currentPlant}&block=${currentBlock}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(rowData),
+        })
+        .then(response => response.json())
+        .then(result => {
+            alert(result.message);
+            row.remove(); // Remove the row from the table
+        });
     }
+
+
 
     function searchTable() {
         const input = document.querySelector('.search-bar');
@@ -415,6 +437,39 @@ def save_data():
     df22 = df22.astype(str)
     job = client.load_table_from_dataframe(df22, table, job_config=job_config)       
     return jsonify({"message": "Data saved successfully"})
+
+#backend se delete karne ka logic
+@app.route('/delete_data', methods=['POST'])
+def delete_data():
+    block = request.args.get('block')
+    plant = request.args.get('plant')
+    row_data = request.json  # This is the row data to be deleted
+    
+    filter_plant = df[df['Plantname'] == plant]  
+    mytable = filter_plant.Tablename.unique()    
+    mytable = listToString(mytable)
+    mytable = remove(mytable)       
+    
+    selectQuery = "SELECT * FROM agel-svc-winddata-dmz-prod.winddata." + mytable    
+    df11 = client.query(selectQuery).to_dataframe()     
+        
+    # Filter out the row to be deleted
+    for key in row_data:
+        df11 = df11[df11[key] != row_data[key]]
+    
+    df33 = df11[df11['Plant'] == plant] 
+    
+    csv_file_path = "D:\\OneDrive - Adani\\Documents\\" + plant + ".csv"    
+    df33.to_csv(csv_file_path, index=False)   
+    
+    table_id = "agel-svc-winddata-dmz-prod.winddata." + mytable     
+    table = bigquery.Table(table_id)
+    job_config = bigquery.LoadJobConfig()
+    job_config.write_disposition = "WRITE_TRUNCATE"  # Overwrite table truncate
+    df11 = df11.astype(str)
+    job = client.load_table_from_dataframe(df11, table, job_config=job_config)       
+    return jsonify({"message": "Row deleted successfully"})
+
 
 # Function to create a public URL
 def create_public_url():
