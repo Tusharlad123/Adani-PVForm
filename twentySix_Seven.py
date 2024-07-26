@@ -5,8 +5,7 @@ import socket
 # Assuming you have a BigQuery client and query already set up
 from google.cloud import bigquery
 from google.oauth2 import service_account
-credentials = service_account.Credentials.from_service_account_file('D:/OneDrive - Adani/Rcode_Adani_Auto/Mypy/agel-svc-winddata-dmz-prod-fdac36bf5880.json')
-project_id = 'agel-svc-winddata-dmz-prod'
+
 client = bigquery.Client(credentials= credentials,project=project_id)
 Tablename = "Static_plants"
 selectQuery = "SELECT * FROM agel-svc-winddata-dmz-prod.winddata." + Tablename
