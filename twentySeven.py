@@ -17,33 +17,29 @@
     }
 
 
-def save_data():
-    block = request.args.get('block')
-    plant = request.args.get('plant')
-    data = request.json
-    print(data)
-    block_df = pd.DataFrame(data)
+    function saveData() {
+        let data = [];
 
-    filter_plant = df[df['Plantname'] == plant]
-    mytable = filter_plant.Tablename.unique()
-    mytable = listToString(mytable)
-    mytable = remove(mytable)
-
-    selectQuery = "SELECT * FROM agel-svc-winddata-dmz-prod.winddata." + mytable
-    df11 = client.query(selectQuery).to_dataframe()
-
-    df22 = df11[df11['Block'] != block].append(block_df, ignore_index=True)
-    df33 = df22[df22['Plant'] == plant]
-
-    print(df22)
-
-    csv_file_path = "D:\\OneDrive - Adani\\Documents\\" + plant + ".csv"
-    df33.to_csv(csv_file_path, index=False)
-
-    table_id = "agel-svc-winddata-dmz-prod.winddata." + mytable
-    table = bigquery.Table(table_id)
-    job_config = bigquery.LoadJobConfig()
-    job_config.write_disposition = "WRITE_TRUNCATE"  # Overwrite table truncate
-    df22 = df22.astype(str)
-    job = client.load_table_from_dataframe(df22, table, job_config=job_config)
-    return jsonify({"message": "Data saved successfully"})
+        let table = document.querySelector('table');
+        let headers = Array.from(table.querySelectorAll('th')).map(th => th.textContent);
+        let rows = table.querySelectorAll('tr');
+        for (let i = 1; i < rows.length; i++) {
+            let row = {};
+            let cells = rows[i].querySelectorAll('td');
+            headers.forEach((header, index) => {
+                if (header !== 'Actions') {
+                    row[header] = cells[index].textContent;
+                }
+            });
+            data.push(row);
+        }
+        fetch(`/save_data?block=${currentBlock}&plant=${currentPlant}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => response.json())
+        .then(result => alert(result.message));
+    }
