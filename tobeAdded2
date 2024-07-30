@@ -1,0 +1,47 @@
+html
+<div id="summary">
+        <p>Total Blocks: <span id="totalBlocks">0</span></p>
+        <p>Total DC Capacity (MWp): <span id="totalDC">0</span></p>
+    </div>
+
+
+js
+function displayData(data) {
+            var tableHtml = `<table>
+                                <thead>
+                                    <tr>
+                                        ${Object.keys(data[0]).map(key => `<th>${key}</th>`).join('')}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${data.map(row => `<tr>${Object.values(row).map(value => `<td contenteditable="true">${value}</td>`).join('')}</tr>`).join('')}
+                                </tbody>
+                            </table>`;
+            document.getElementById('data').innerHTML = tableHtml;
+        }
+  function displaySummary(summary) {
+            document.getElementById('totalBlocks').textContent = summary.totalblocks;
+            document.getElementById('totalDC').textContent = summary.totaldcMWp;
+        }
+
+#pyhton
+def load_data():
+    plant = request.args.get('plant')
+    block = request.args.get('block')
+    filter_plant = df[df['Plantname'] == plant]
+    mytable = filter_plant.Tablename.unique()
+    mytable = listToString(mytable)
+    mytable = remove(mytable)
+    selectQuery = "SELECT * FROM agel-svc-winddata-dmz-prod.winddata." + mytable + " WHERE Plant = '" + plant + "'"
+    df1 = client.query(selectQuery).to_dataframe()
+    df2 = df1[df1['Plant'] == plant]
+    host = socket.gethostname()
+    if block:
+        block_data = df2[df2['Block'] == block]
+        summary = {
+            'totalblocks': len(block_data.Block.unique()),
+            'totaldcMWp': round(sum(pd.to_numeric(block_data['DCCapacityKWp'], errors='coerce').dropna()) / 1000, 2)
+        }
+        return jsonify({'data': block_data.to_dict(orient='records'), 'summary': summary})
+    blocks = df2.Block.unique()
+    return jsonify(blocks.tolist())
