@@ -2,6 +2,7 @@ upated css
 
 /* Additional styles for summary */
 
+/* Additional styles for summary */
 .summary-container {
     padding: 20px;
     background-color: #fff;
@@ -10,13 +11,14 @@ upated css
     margin-top: 20px;
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    justify-content: space-between;
 }
 
 .summary-item {
-    flex: 1 1 45%; /* Adjust the width to be about half of the container */
-    box-sizing: border-box;
+    width: 45%; /* Adjust the width to be about half of the container */
+    margin-bottom: 10px; /* Add some spacing between items */
 }
+
 
 
 
@@ -33,6 +35,7 @@ updated html
     <div class="summary-item" id="ModuleMake"></div>
     <div class="summary-item" id="ModuleModels"></div>
 </div>
+
 
 
 
