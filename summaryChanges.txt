@@ -7,19 +7,14 @@ upated css
     border: 1px solid #ddd;
     border-radius: 5px;
     margin-top: 20px;
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 10px;
 }
 
-.summary-item {
-    flex: 1 1 45%; /* Take up to 45% of the container's width, adjust as needed */
-    margin-bottom: 10px;
-}
 
 
 updated html
-
 <div class="summary-container" id="summaryContainer" style="display: none;">
     <h3>Summary</h3>
     <div class="summary-item" id="totalBlocks"></div>
