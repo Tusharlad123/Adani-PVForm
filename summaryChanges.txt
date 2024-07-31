@@ -1,0 +1,70 @@
+upated css
+
+/* Additional styles for summary */
+.summary-container {
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.summary-item {
+    flex: 1 1 45%; /* Take up to 45% of the container's width, adjust as needed */
+    margin-bottom: 10px;
+}
+
+
+updated html
+
+<div class="summary-container" id="summaryContainer" style="display: none;">
+    <h3>Summary</h3>
+    <div class="summary-item" id="totalBlocks"></div>
+    <div class="summary-item" id="totalDcMWp"></div>
+    <div class="summary-item" id="totalString"></div>
+    <div class="summary-item" id="InverterMake"></div>
+    <div class="summary-item" id="totalInverters"></div>
+    <div class="summary-item" id="invertersModels"></div>
+    <div class="summary-item" id="ModuleMake"></div>
+    <div class="summary-item" id="ModuleModels"></div>
+</div>
+
+
+updated js
+
+function createBlockDropdown(blocks, summary) {
+    const blockDropdown = document.getElementById('blockDropdown');
+    blockDropdown.innerHTML = '';
+    blocks.forEach(block => {
+        const option = document.createElement('option');
+        option.value = block;
+        option.text = block;
+        blockDropdown.appendChild(option);
+    });
+    blockDropdown.style.display = 'block';
+
+    // Display summary
+    const summaryContainer = document.getElementById('summaryContainer');
+    const totalBlocks = document.getElementById('totalBlocks');
+    const totalDcMWp = document.getElementById('totalDcMWp');
+    const totalinv = document.getElementById('totalInverters');
+    const invMake = document.getElementById('InverterMake');
+    const invModel = document.getElementById('invertersModels');
+    const modMake = document.getElementById('ModuleMake');
+    const modModel = document.getElementById('ModuleModels');
+    const totalStr = document.getElementById('totalString');
+
+    totalBlocks.textContent = `Total Blocks: ${summary.total_blocks}`;
+    totalDcMWp.textContent = `Total DC MWp: ${summary.total_dc_mwp}`;
+    totalStr.textContent = `Total String: ${summary.strCount}`;
+    invMake.textContent = `Inverter Make: ${summary.invMake}`;
+    totalinv.textContent = `Total Inverters: ${summary.total_invMake}`;
+    invModel.textContent = `Inverter Models: ${summary.total_invModel}`;
+    modMake.textContent = `Module Make: ${summary.total_modMake}`;
+    modModel.textContent = `Module Model: ${summary.total_ModModel}`;
+
+    summaryContainer.style.display = 'block';
+}
