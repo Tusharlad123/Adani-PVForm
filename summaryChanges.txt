@@ -1,8 +1,6 @@
 upated css
 
 /* Additional styles for summary */
-
-/* Additional styles for summary */
 .summary-container {
     padding: 20px;
     background-color: #fff;
@@ -10,13 +8,17 @@ upated css
     border-radius: 5px;
     margin-top: 20px;
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 10px; /* Add some spacing between rows */
+}
+
+.summary-row {
+    display: flex;
     justify-content: space-between;
 }
 
 .summary-item {
     width: 45%; /* Adjust the width to be about half of the container */
-    margin-bottom: 10px; /* Add some spacing between items */
 }
 
 
@@ -26,15 +28,24 @@ upated css
 updated html
 <div class="summary-container" id="summaryContainer" style="display: none;">
     <h3>Summary</h3>
-    <div class="summary-item" id="totalBlocks"></div>
-    <div class="summary-item" id="totalDcMWp"></div>
-    <div class="summary-item" id="totalString"></div>
-    <div class="summary-item" id="InverterMake"></div>
-    <div class="summary-item" id="totalInverters"></div>
-    <div class="summary-item" id="invertersModels"></div>
-    <div class="summary-item" id="ModuleMake"></div>
-    <div class="summary-item" id="ModuleModels"></div>
+    <div class="summary-row">
+        <div class="summary-item" id="totalBlocks"></div>
+        <div class="summary-item" id="totalString"></div>
+    </div>
+    <div class="summary-row">
+        <div class="summary-item" id="totalDcMWp"></div>
+        <div class="summary-item" id="InverterMake"></div>
+    </div>
+    <div class="summary-row">
+        <div class="summary-item" id="totalInverters"></div>
+        <div class="summary-item" id="invertersModels"></div>
+    </div>
+    <div class="summary-row">
+        <div class="summary-item" id="ModuleMake"></div>
+        <div class="summary-item" id="ModuleModels"></div>
+    </div>
 </div>
+
 
 
 
