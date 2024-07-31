@@ -1,16 +1,23 @@
 upated css
 
 /* Additional styles for summary */
+
 .summary-container {
     padding: 20px;
     background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 5px;
     margin-top: 20px;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    flex-wrap: wrap;
     gap: 10px;
 }
+
+.summary-item {
+    flex: 1 1 45%; /* Adjust the width to be about half of the container */
+    box-sizing: border-box;
+}
+
 
 
 
@@ -26,6 +33,8 @@ updated html
     <div class="summary-item" id="ModuleMake"></div>
     <div class="summary-item" id="ModuleModels"></div>
 </div>
+
+
 
 
 updated js
